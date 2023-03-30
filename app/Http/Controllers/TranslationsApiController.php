@@ -32,8 +32,15 @@ class TranslationsApiController extends Controller
             ->toArray()[0];
 
         $translations = Translation::where('set', $set['id'])
-            ->get(['id', 'language', 'code', 'value'])
+            ->where('language', $request->route('language'))
+            ->get(['code', 'value'])
             ->toArray();
+
+
+        $preparedTranslations = [];
+        foreach ($translations as $translation) {
+            $preparedTranslations[$translation['code']] = $translation['value'];
+        }
 
         if (!isset($translations[0])) {
             return response()->json([
@@ -43,7 +50,7 @@ class TranslationsApiController extends Controller
         }
         return response()->json([
             'status' => true,
-            'value' => $translations
+            'value' => $preparedTranslations
         ]);
     }
 }

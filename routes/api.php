@@ -18,4 +18,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/translations/get/{set_id}/{token}', [\App\Http\Controllers\TranslationsApiController::class, 'get'])->name('translations.get');
+Route::get('/translations/get/{set_id}/{token}/{language?}', [\App\Http\Controllers\TranslationsApiController::class, 'get'])->name('translations.get');

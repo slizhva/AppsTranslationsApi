@@ -31,11 +31,42 @@ class TranslationsController extends Controller
             ->orderBy('id', 'desc')
             ->get(['id', 'language', 'code', 'value'])
             ->toArray();
+
+
+        $allLanguages = array_values(array_unique(array_map(
+            function($elem){return $elem['language'];}, $translations
+        )));
+        $allCodes = array_values(array_unique(array_map(
+            function($elem){return $elem['code'];}, $translations
+        )));
+        $translationsTable = [];
+        foreach ($allCodes as $code) {
+            foreach ($allLanguages as $language) {
+                foreach ($translations as $translation) {
+                    if ($translation['language'] === $language && $translation['code'] === $code) {
+                        $translationsTable[$code][$language] = [
+                            'value' => $translation['value'],
+                            'id' => $translation['id']
+                        ];
+                        break;
+                    }
+                }
+                if (empty($translationsTable[$code][$language])) {
+                    $translationsTable[$code][$language] = [
+                        'value' => '',
+                        'id' => null
+                    ];
+                }
+            }
+        }
+
         return view('translations.translations', [
             'token' => $user->api_token,
             'dangerous_actions_key' => $user->dangerous_actions_key,
-            'translations' => $translations,
             'set' => $set,
+            'allLanguages' => $allLanguages,
+            'allCodes' => $allCodes,
+            'translations' => $translationsTable,
         ]);
     }
 
@@ -68,7 +99,7 @@ class TranslationsController extends Controller
             ->toArray()[0];
 
         $translation = Translation
-            ::where('id', $request->route('data_id'))
+            ::where('id', $request->route('translation_id'))
             ->where('set', $set['id'])
             ->limit(1);
 
@@ -82,6 +113,11 @@ class TranslationsController extends Controller
 
     public function update(Request $request):RedirectResponse
     {
+        if (empty($request->route('translation_id'))) {
+            $this->add($request);
+            return redirect()->route('translations', $request->route('set_id'));
+        }
+
         $set = Set
             ::where('id', $request->route('set_id'))
             ->where('user', Auth::id())
