@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'api_token',
+        'dangerous_actions_key',
     ];
 
     /**

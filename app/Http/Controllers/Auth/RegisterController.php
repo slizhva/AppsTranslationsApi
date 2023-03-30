@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -53,6 +54,11 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'registration_key' => ['string', function ($attribute, $value, $fail) {
+                if ($value !== env('REGISTRATION_KEY')) {
+                    $fail('The Registration Key is invalid.');
+                }
+            }],
         ]);
     }
 
@@ -68,6 +74,8 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'dangerous_actions_key' => $data['dangerous_actions_key'],
+            'api_token' => Str::random(60),
         ]);
     }
 }
