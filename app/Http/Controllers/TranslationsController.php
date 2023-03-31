@@ -17,6 +17,12 @@ class TranslationsController extends Controller
         $this->middleware('auth');
     }
 
+    private function getAllArrayValueByKey(array $array, string $key): array {
+        return array_values(array_unique(array_map(
+            static function($elem) use ($key) {return $elem[$key];}, $array
+        )));
+    }
+
     public function translations(Request $request):Renderable
     {
         $user = Auth::user();
@@ -28,17 +34,14 @@ class TranslationsController extends Controller
             ->toArray()[0];
 
         $translations = Translation::where('set', $set['id'])
-            ->orderBy('id', 'desc')
+            ->orderBy('language', 'asc')
             ->get(['id', 'language', 'code', 'value'])
             ->toArray();
 
 
-        $allLanguages = array_values(array_unique(array_map(
-            function($elem){return $elem['language'];}, $translations
-        )));
-        $allCodes = array_values(array_unique(array_map(
-            function($elem){return $elem['code'];}, $translations
-        )));
+        $allLanguages = $this->getAllArrayValueByKey($translations, 'language');
+        $allCodes = $this->getAllArrayValueByKey($translations, 'code');
+
         $translationsTable = [];
         foreach ($allCodes as $code) {
             foreach ($allLanguages as $language) {
@@ -113,7 +116,7 @@ class TranslationsController extends Controller
 
     public function update(Request $request):RedirectResponse
     {
-        if (empty($request->route('translation_id'))) {
+        if (empty($request->get('translation_id'))) {
             $this->add($request);
             return redirect()->route('translations', $request->route('set_id'));
         }
@@ -125,14 +128,18 @@ class TranslationsController extends Controller
             ->get(['id'])
             ->toArray()[0];
 
-        Translation
-            ::where('id', $request->route('translation_id'))
-            ->where('set', $set['id'])
-            ->update([
+        $translation = Translation
+            ::where('id', $request->get('translation_id'))
+            ->where('set', $set['id']);
+        if (empty($request->get('value'))) {
+            $translation ->delete();
+        } else {
+            $translation->update([
                 'language' => $request->get('language'),
-                'name' => $request->get('name'),
+                'code' => $request->get('code'),
                 'value' => $request->get('value'),
             ]);
+        }
 
         return redirect()->route('translations', $set['id']);
     }

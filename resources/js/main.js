@@ -25,4 +25,52 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    const $translationsTable = $('#translationsTable')
+    $translationsTable.find('thead th').each(function (i, el) {
+        $(el).click(function(e) {
+            const columnNumber = $(e.target).index() + 1
+            const columnName = $(e.target).text();
+            $('#hiddenFieldsTitle').removeClass('d-none')
+            $('.hidden-fields:contains("' + columnName + '")').removeClass('d-none')
+            $translationsTable.find('th:nth-child(' + columnNumber + '), td:nth-child(' + columnNumber + ')').addClass('d-none')
+            let storedHiddenFields = localStorage.getItem('hiddenFields')
+            if (!storedHiddenFields) {
+                storedHiddenFields = ''
+            }
+            storedHiddenFields += columnName + ' '
+            localStorage.setItem('hiddenFields', storedHiddenFields)
+        })
+    })
+
+    $('.hidden-fields').click(function(e) {
+        const columnName = $(e.target).addClass('d-none').attr('data-language')
+        const column = $translationsTable.find('th:contains("' + columnName + '")')
+        column.removeClass('d-none')
+        const columnNumber = column.index() + 1
+        $translationsTable.find('td:nth-child(' + columnNumber + ')').removeClass('d-none')
+        let storedHiddenFields = localStorage.getItem('hiddenFields')
+        storedHiddenFields = storedHiddenFields.replace(columnName + ' ', '');
+        localStorage.setItem('hiddenFields', storedHiddenFields)
+    })
+
+    const storedHiddenFields = localStorage.getItem('hiddenFields')
+    if (storedHiddenFields) {
+        storedHiddenFields.split(' ').map(function (columnName, i) {
+            if(columnName) {
+                $('#hiddenFieldsTitle').removeClass('d-none')
+                $('.hidden-fields[data-language="' + columnName + '"]').removeClass('d-none')
+                const column = $translationsTable.find('th:contains("' + columnName + '")')
+                column.addClass('d-none')
+                const columnNumber = column.index() + 1
+                $translationsTable.find('td:nth-child(' + columnNumber + ')').addClass('d-none')
+            }
+        })
+    }
+
+    $translationsTable.find('tbody textarea').each(function (i, el) {
+        $(el).change(function(e) {
+            $(e.target).parents('form').submit();
+        })
+    })
 });

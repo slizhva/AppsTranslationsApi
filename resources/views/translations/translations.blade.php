@@ -40,8 +40,15 @@
                 </div>
 
                 <hr class="mt-4 mb-4">
+                <div class="col-md-12 mb-4">
+                    <h5 id="hiddenFieldsTitle" class="fw-bold d-none">Hidden languages:</h5>
+                    <div data-language="Code/Language" class="hidden-fields d-none btn btn-warning"><strong class="pe-none">Code/Language+</strong></div>
+                    @foreach($allLanguages as $key => $language)
+                        <div data-language="{{ $language }}" class="hidden-fields d-none btn btn-warning">{{ $language }}<strong class="pe-none">+</strong></div>
+                    @endforeach
+                </div>
 
-                <table class="table table-hover table-sm">
+                <table id="translationsTable" class="table table-hover table-sm">
                     <thead class="table-primary">
                         <tr>
                             <th class="table-secondary align-middle text-center">Code/Language</th>
@@ -52,15 +59,17 @@
                     </thead>
 
                     <tbody>
-                        @foreach($translations as $language => $translation)
+                        @foreach($translations as $code => $translation)
                             <tr>
                                 <td class="table-primary fw-bold align-middle text-center">{{ $allCodes[$loop->index] }}</td>
-                                @foreach($translation as $code => $value)
+                                @foreach($translation as $language => $value)
                                     <td>
-                                        <form action="{{ route('translation.update', [$set['id'], $value['id']]) }}" type="post">
+                                        <form action="{{ route('translation.update', $set['id']) }}" method="post">
+                                            {{ csrf_field() }}
+                                            <input name="translation_id" type="hidden" value="{{ $value['id'] }}">
                                             <input name="language" type="hidden" value="{{ $language }}">
                                             <input name="code" type="hidden" value="{{ $code }}">
-                                            <textarea class="w-100" name="value">{{ $value['value'] }}</textarea>
+                                            <textarea rows="10" class="w-100" name="value">{{ $value['value'] }}</textarea>
                                         </form>
                                     </td>
                                 @endforeach
