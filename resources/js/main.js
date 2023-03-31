@@ -68,9 +68,17 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     }
 
-    $translationsTable.find('tbody textarea').each(function (i, el) {
+    $translationsTable.find('tbody textarea').map(function (i, el) {
         $(el).change(function(e) {
-            $(e.target).parents('form').submit();
+            const $form = $(e.target).parents('form')
+            $.ajax({
+                url: $form.attr('action'),
+                dataType: "json",
+                type: "Post",
+                async: true,
+                data: $form.serialize(),
+                success: function (data) {},
+            })
         })
     })
 });

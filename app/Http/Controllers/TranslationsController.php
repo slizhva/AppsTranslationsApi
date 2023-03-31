@@ -94,6 +94,10 @@ class TranslationsController extends Controller
 
     public function delete(Request $request):RedirectResponse
     {
+        if (empty($request->get('translation_id'))) {
+            return redirect()->route('translations', (int)$request->route('set_id'))->with('error', 'Error: Data item not found.');
+        }
+
         $set = Set
             ::where('id', $request->route('set_id'))
             ->where('user', Auth::id())
@@ -102,7 +106,7 @@ class TranslationsController extends Controller
             ->toArray()[0];
 
         $translation = Translation
-            ::where('id', $request->route('translation_id'))
+            ::where('id', $request->get('translation_id'))
             ->where('set', $set['id'])
             ->limit(1);
 
@@ -132,7 +136,7 @@ class TranslationsController extends Controller
             ::where('id', $request->get('translation_id'))
             ->where('set', $set['id']);
         if (empty($request->get('value'))) {
-            $translation ->delete();
+            $translation->delete();
         } else {
             $translation->update([
                 'language' => $request->get('language'),

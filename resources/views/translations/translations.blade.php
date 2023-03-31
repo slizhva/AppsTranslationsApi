@@ -63,13 +63,19 @@
                             <tr>
                                 <td class="table-primary fw-bold align-middle text-center">{{ $allCodes[$loop->index] }}</td>
                                 @foreach($translation as $language => $value)
-                                    <td>
+                                    <td class="p-0">
                                         <form action="{{ route('translation.update', $set['id']) }}" method="post">
                                             {{ csrf_field() }}
                                             <input name="translation_id" type="hidden" value="{{ $value['id'] }}">
                                             <input name="language" type="hidden" value="{{ $language }}">
                                             <input name="code" type="hidden" value="{{ $code }}">
-                                            <textarea rows="10" class="w-100" name="value">{{ $value['value'] }}</textarea>
+                                            <textarea class="form-control" rows="10" class="w-100" name="value">{{ $value['value'] }}</textarea>
+                                        </form>
+                                        <form class="delete-form" method="POST" action="{{ route('translation.delete', $set['id']) }}">
+                                            {{ csrf_field() }}
+                                            <input name="translation_id" type="hidden" value="{{ $value['id'] }}">
+                                            <input name="dangerous_actions_key" class="dangerous-action-key-value" type="text" value="" hidden>
+                                            <input class="col-md-12 pt-0 pb-0 dangerous-action-button" type="submit" value="Delete" disabled>
                                         </form>
                                     </td>
                                 @endforeach
@@ -82,7 +88,7 @@
 
         <div class="row mt-5">
             <hr>
-            <div class="col-md-6">
+            <div class="col-md-5">
                 @include('components.dangerous_action_form')
             </div>
         </div>

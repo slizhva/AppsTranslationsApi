@@ -46,7 +46,7 @@
 
         <div class="row mt-5">
             <hr>
-            <div class="col-md-6">
+            <div class="col-md-8">
                 @include('components.dangerous_action_form')
             </div>
         </div>
