@@ -9,7 +9,7 @@
 @endsection
 
 @section('admin-title')
-    <span><a class="btn btn-link p-0" href="{{ route('sets') }}">Sets</a>/Data</span>
+    <span><a class="btn btn-link p-0" href="{{ route('sets') }}">Sets</a></span>
 @endsection
 
 @section('admin-body')
@@ -20,7 +20,7 @@
                 <strong>---Sets:---</strong>
                 <form class="row" method="POST" action="{{ route('set.add') }}" >
                     {{ csrf_field() }}
-                    <input name="name" type="text" value="" placeholder="Data name" class="col-md-9" required>
+                    <input name="name" type="text" value="" placeholder="Set name" class="col-md-9" required>
                     <input type="submit" value="Add" class="col-md-3">
                 </form>
                 <div class="row border-bottom border-top bg-light">
