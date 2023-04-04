@@ -27,6 +27,7 @@ Route::post('/set/{set_id}/delete', [\App\Http\Controllers\SetsController::class
 // Translations
 Route::get('/translations/{set_id}', [\App\Http\Controllers\TranslationsController::class, 'translations'])->name('translations');
 Route::post('/translation/{set_id}/add', [\App\Http\Controllers\TranslationsController::class, 'add'])->name('translation.add');
+Route::post('/translation/{set_id}/upload', [\App\Http\Controllers\TranslationsController::class, 'upload'])->name('translation.upload');
 Route::post('/translation/{set_id}/delete', [\App\Http\Controllers\TranslationsController::class, 'delete'])->name('translation.delete');
 Route::post('/translation/{set_id}/update', [\App\Http\Controllers\TranslationsController::class, 'update'])->name('translation.update');
 

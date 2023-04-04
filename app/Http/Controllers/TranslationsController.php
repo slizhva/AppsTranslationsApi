@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Translation;
 use App\Models\Set;
@@ -88,6 +89,39 @@ class TranslationsController extends Controller
         $translation->language = $request->get('language');
         $translation->value = $request->get('value');
         $translation->save();
+
+        return redirect()->route('translations', (int)$set['id']);
+    }
+
+    public function upload(Request $request):RedirectResponse
+    {
+        $request->validate([
+            'translations' => 'required'
+        ]);
+
+        $set = Set
+            ::where('id', $request->route('set_id'))
+            ->where('user', Auth::id())
+            ->limit(1)
+            ->get(['id'])
+            ->toArray()[0];
+
+
+        $storagePath = Storage::disk('local')->put('', $request->translations);
+        $translations = file_get_contents(Storage::path($storagePath));
+        Storage::disk('local')->delete($storagePath);
+        $translations = preg_split("/\r\n|\n|\r/", $translations);
+
+        foreach ($translations as $translation) {
+            [$code, $value] = explode('|', $translation);
+            Translation::updateOrCreate([
+                'set' => $set['id'],
+                'code' => $code,
+                'language' => $request->get('language'),
+            ], [
+                'value' => $value,
+            ]);
+        }
 
         return redirect()->route('translations', (int)$set['id']);
     }

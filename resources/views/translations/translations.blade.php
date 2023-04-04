@@ -29,14 +29,30 @@
                 <hr class="mt-4 mb-4">
 
                 <strong>---Add translation:---</strong>
-                <div class="container">
-                    <form class="row" method="POST" action="{{ route('translation.add', $set['id']) }}" >
-                        {{ csrf_field() }}
-                        <textarea rows="5" name="value" placeholder="Value" class="col-md-12" required></textarea>
-                        <input name="language" type="text" value="" placeholder="Language" class="col-md-2" required>
-                        <input name="code" type="text" value="" placeholder="Code" class="col-md-7" required>
-                        <input type="submit" value="Add" class="col-md-3">
-                    </form>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <form class="row" method="POST" action="{{ route('translation.add', $set['id']) }}" >
+                            {{ csrf_field() }}
+                            <textarea rows="5" name="value" placeholder="Value" class="col-md-12" required></textarea>
+                            <input name="language" type="text" value="" placeholder="Language" class="col-md-2" required>
+                            <input name="code" type="text" value="" placeholder="Code" class="col-md-7" required>
+                            <input type="submit" value="Add" class="col-md-3">
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <form
+                            class="d-flex flex-column h-100 justify-content-center align-items-center"
+                            method="POST"
+                            action="{{ route('translation.upload', $set['id']) }}"
+                            enctype="multipart/form-data"
+                        >
+                            {{ csrf_field() }}
+                            <input name="translations" type="file" class="w-50 mb-2" required>
+                            <input name="language" type="text" placeholder="Language" class="w-50 mb-2" required>
+                            <input type="submit" value="Upload" class="w-50">
+                        </form>
+                    </div>
                 </div>
 
                 <hr class="mt-4 mb-4">
