@@ -86,7 +86,7 @@ class TranslationsController extends Controller
         $translation = new Translation;
         $translation->set = $set['id'];
         $translation->code = $request->get('code');
-        $translation->language = $request->get('language');
+        $translation->language = strtolower($request->get('language'));
         $translation->value = $request->get('value');
         $translation->save();
 
@@ -117,7 +117,7 @@ class TranslationsController extends Controller
             Translation::updateOrCreate([
                 'set' => $set['id'],
                 'code' => $code,
-                'language' => $request->get('language'),
+                'language' => strtolower($request->get('language')),
             ], [
                 'value' => $value,
             ]);
