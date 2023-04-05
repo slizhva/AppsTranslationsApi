@@ -110,9 +110,12 @@ class TranslationsController extends Controller
         $storagePath = Storage::disk('local')->put('', $request->translations);
         $translations = file_get_contents(Storage::path($storagePath));
         Storage::disk('local')->delete($storagePath);
-        $translations = preg_split("/\r\n|\n|\r/", $translations);
+        $translations = preg_split("/\r\n|\n|\r/", trim($translations));
 
         foreach ($translations as $translation) {
+            if (empty($translation)) {
+                continue;
+            }
             [$code, $value] = explode('|', $translation);
             Translation::updateOrCreate([
                 'set' => $set['id'],
